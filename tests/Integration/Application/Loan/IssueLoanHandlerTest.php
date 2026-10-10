@@ -31,7 +31,10 @@ final class IssueLoanHandlerTest extends DatabaseTestCase
         $handler = self::getContainer()->get(IssueLoanHandler::class);
 
         // Действие.
-        $handler->handle($client, $book);
+        $issuedLoan = $handler->handle($client, $book);
+        $issuedLoanId = $issuedLoan->id();
+
+        self::assertNotNull($issuedLoanId);
 
         // Убираем объекты из памяти, чтобы проверить данные из базы.
         $this->entityManager->clear();
@@ -45,6 +48,7 @@ final class IssueLoanHandlerTest extends DatabaseTestCase
 
         // Проверка результата.
         self::assertInstanceOf(Loan::class, $loan);
+        self::assertSame($issuedLoanId, $loan->id());
         self::assertSame($clientId, $loan->client()->id());
         self::assertSame($bookId, $loan->book()->id());
         self::assertNull($loan->returned_at());
