@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\Loan\Entity;
+namespace App\Tests\Unit\Domain\Loan\Entity;
 
 use App\Domain\Book\Entity\Book;
 use App\Domain\Client\Entity\Client;

@@ -12,6 +12,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
+#[ORM\UniqueConstraint(
+    name: 'uniq_loan_open_book',
+    columns: ['book_id'],
+    options: ['where' => '(returned_at IS NULL)'],
+)]
 class Loan
 {
     #[ORM\Id]

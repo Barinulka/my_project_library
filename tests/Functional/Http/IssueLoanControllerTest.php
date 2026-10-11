@@ -9,44 +9,9 @@ use App\Domain\Client\Entity\Client;
 use App\Domain\Loan\Entity\Loan;
 use App\Infrastructure\Persistence\Doctrine\LoanRepository;
 use DateTimeImmutable;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-final class IssueLoanControllerTest extends WebTestCase
+final class IssueLoanControllerTest extends DatabaseWebTestCase
 {
-    private KernelBrowser $browser;
-    private EntityManagerInterface $entityManager;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->browser = self::createClient();
-
-        $this->entityManager = self::getContainer()
-            ->get(EntityManagerInterface::class);
-
-        $this->entityManager->getConnection()->beginTransaction();
-    }
-
-    protected function tearDown(): void
-    {
-        try {
-            if (isset($this->entityManager)) {
-                $connection = $this->entityManager->getConnection();
-
-                if ($connection->isTransactionActive()) {
-                    $connection->rollBack();
-                }
-
-                $this->entityManager->close();
-            }
-        } finally {
-            parent::tearDown();
-        }
-    }
-
     public function testCreatesLoan(): void
     {
         $client = new Client('Анна', 'anna@example.com');
