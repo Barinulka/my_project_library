@@ -12,6 +12,42 @@ use App\Tests\Integration\DatabaseTestCase;
 
 final class LoanRepositoryTest extends DatabaseTestCase
 {
+    public function testOverdueBoundaryExcludesEqualDeadlineAndReturnedLoans(): void
+    {
+        $now = new \DateTimeImmutable('2026-10-14 12:00:00');
+        $client = new Client('Граница срока', 'boundary@example.com');
+        $this->entityManager->persist($client);
+        $repository = self::getContainer()->get(LoanRepository::class);
+        $loans = [];
+
+        foreach (['past' => '-1 second', 'equal' => '+0 seconds', 'future' => '+1 second', 'returned' => '-1 day'] as $label => $offset) {
+            $book = new Book('BOUNDARY-'.$label, 'Книга', 'Автор');
+            $loan = new Loan($client, $book, $now->modify('-14 days'), $now->modify($offset));
+            if ($label === 'returned') {
+                $loan->returned();
+            }
+            $this->entityManager->persist($book);
+            $this->entityManager->persist($loan);
+            $loans[$label] = $loan;
+        }
+        $this->entityManager->flush();
+
+        $fixtureIds = array_map(static fn (Loan $loan) => $loan->id(), $loans);
+        $overdueIds = array_map(static fn (Loan $loan) => $loan->id(), $repository->findOverdueLoans($now));
+        self::assertSame([$loans['past']->id()], array_values(array_intersect($overdueIds, $fixtureIds)));
+        self::assertTrue($repository->hasOverdueLoansByClient($client, $now));
+
+        $loans['past']->returned();
+        $this->entityManager->flush();
+
+        // Срок ровно now ещё не истёк, закрытые выдачи не блокируют читателя.
+        self::assertFalse($repository->hasOverdueLoansByClient($client, $now));
+        self::assertSame([], array_values(array_intersect(
+            array_map(static fn (Loan $loan) => $loan->id(), $repository->findOverdueLoans($now)),
+            $fixtureIds,
+        )));
+    }
+
     public function testRejectsTwoOpenLoansForSameBook(): void
     {
         $client = new Client('Анна', 'anna@example.com');
