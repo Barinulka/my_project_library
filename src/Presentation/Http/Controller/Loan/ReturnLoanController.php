@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Presentation\Http\Controller;
+namespace App\Presentation\Http\Controller\Loan;
 
 use App\Application\Loan\Exception\LoanReturnRejectedException;
 use App\Application\Loan\ReturnLoanHandler;
 use App\Infrastructure\Persistence\Doctrine\BookRepository;
-use App\Presentation\Http\Request\ReturnLoanRequest;
+use App\Presentation\Http\Request\Loan\ReturnLoanRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,11 +29,7 @@ class ReturnLoanController extends AbstractController
             throw $this->createNotFoundException('Книга не найдена');
         }
 
-        try {
-            $loan = $loanHandler->handle($book);
-        } catch (LoanReturnRejectedException $exception) {
-            return $this->json(['message' => $exception->getMessage()], Response::HTTP_CONFLICT);
-        }
+        $loan = $loanHandler->handle($book);
 
         return $this->json(['id' => $loan->id(), 'message' => 'Книга возвращена'], Response::HTTP_OK);
     }

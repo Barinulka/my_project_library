@@ -37,6 +37,21 @@ class LoanRepository extends ServiceEntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    /** @return Loan[] */
+    public function findOpenLoansByClient(Client $client): array
+    {
+        $qb = $this->createQueryBuilder('l');
+
+        $qb
+            ->join('l.book', 'b')
+            ->addSelect('b')
+            ->where('l.client = :client')
+            ->andWhere('l.returned_at IS NULL')
+            ->setParameter('client', $client);
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function countOpenLoansByClient(Client $client): int
     {
         $qb = $this->createQueryBuilder('l');
@@ -66,5 +81,40 @@ class LoanRepository extends ServiceEntityRepository
             ->setParameter('now', $now);
 
         return (int) $qb->getQuery()->getSingleScalarResult() > 0;
+    }
+
+    /** @return Loan[] */
+    public function findOverdueLoans(DateTimeImmutable $now): array
+    {
+        $qb = $this->createQueryBuilder('l');
+
+        $qb
+            ->join('l.book', 'b')
+            ->join('l.client', 'c')
+            ->addSelect('b')
+            ->addSelect('c')
+            ->where('l.planned_return_at < :now')
+            ->andWhere('l.returned_at IS NULL')
+            ->setParameter('now', $now)
+            ->orderBy('l.planned_return_at', 'ASC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /** @return Loan[] */
+    public function findHistoryByBook(Book $book): array
+    {
+        $qb = $this->createQueryBuilder('l');
+
+        $qb
+            ->join('l.book', 'b')
+            ->join('l.client', 'c')
+            ->addSelect('b')
+            ->addSelect('c')
+            ->where('l.book = :book')
+            ->setParameter('book', $book)
+            ->orderBy('l.loan_at', 'DESC');
+
+        return $qb->getQuery()->getResult();
     }
 }
