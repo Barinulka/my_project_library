@@ -86,8 +86,10 @@ class ReturnLoanControllerTest extends DatabaseWebTestCase
             flags: JSON_THROW_ON_ERROR,
         );
 
-        self::assertArrayHasKey('message', $data);
-        self::assertSame('Не удалось найти открытой выдачи', $data['message']);
+        self::assertSame([
+            'message' => 'Не удалось найти открытой выдачи',
+            'errors' => [],
+        ], $data);
 
         $this->entityManager->clear();
 
@@ -121,8 +123,10 @@ class ReturnLoanControllerTest extends DatabaseWebTestCase
             flags: JSON_THROW_ON_ERROR,
         );
 
-        self::assertArrayHasKey('detail', $data);
-        self::assertSame('Книга не найдена', $data['detail']);
+        self::assertSame([
+            'message' => 'Книга не найдена',
+            'errors' => [],
+        ], $data);
     }
 
     public function testRejectsNegativeBookId(): void
@@ -140,8 +144,13 @@ class ReturnLoanControllerTest extends DatabaseWebTestCase
             flags: JSON_THROW_ON_ERROR,
         );
 
-        self::assertArrayHasKey('detail', $data);
-        self::assertSame('book_id: Значение должно быть положительным числом', $data['detail']);
+        self::assertSame([
+            'message' => 'Ошибка валидации',
+            'errors' => [[
+                'field' => 'book_id',
+                'message' => 'Значение должно быть положительным числом',
+            ]],
+        ], $data);
     }
 
     public function testRejectsRepeatedReturnWithoutChangingReturnDate(): void
@@ -170,6 +179,17 @@ class ReturnLoanControllerTest extends DatabaseWebTestCase
 
         self::assertResponseStatusCodeSame(409);
         self::assertResponseHeaderSame('Content-Type', 'application/json');
+
+        $data = json_decode(
+            $this->browser->getResponse()->getContent(),
+            true,
+            flags: JSON_THROW_ON_ERROR,
+        );
+
+        self::assertSame([
+            'message' => 'Не удалось найти открытой выдачи',
+            'errors' => [],
+        ], $data);
 
         $this->entityManager->clear();
 

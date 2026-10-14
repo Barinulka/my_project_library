@@ -88,8 +88,10 @@ final class IssueLoanControllerTest extends DatabaseWebTestCase
             flags: JSON_THROW_ON_ERROR,
         );
 
-        self::assertArrayHasKey('message', $data);
-        self::assertSame('Экземпляр уже выдан', $data['message']);
+        self::assertSame([
+            'message' => 'Экземпляр уже выдан',
+            'errors' => [],
+        ], $data);
 
         $this->entityManager->clear();
 
@@ -134,8 +136,10 @@ final class IssueLoanControllerTest extends DatabaseWebTestCase
             flags: JSON_THROW_ON_ERROR,
         );
 
-        self::assertArrayHasKey('detail', $data);
-        self::assertSame('Клиент не найден', $data['detail']);
+        self::assertSame([
+            'message' => 'Клиент не найден',
+            'errors' => [],
+        ], $data);
 
         $this->entityManager->clear();
 
@@ -174,8 +178,10 @@ final class IssueLoanControllerTest extends DatabaseWebTestCase
             flags: JSON_THROW_ON_ERROR,
         );
 
-        self::assertArrayHasKey('detail', $data);
-        self::assertSame('Книга не найдена', $data['detail']);
+        self::assertSame([
+            'message' => 'Книга не найдена',
+            'errors' => [],
+        ], $data);
 
         $this->entityManager->clear();
 
@@ -208,8 +214,13 @@ final class IssueLoanControllerTest extends DatabaseWebTestCase
             flags: JSON_THROW_ON_ERROR,
         );
 
-        self::assertArrayHasKey('detail', $data);
-        self::assertSame('client_id: Значение должно быть положительным числом', $data['detail']);
+        self::assertSame([
+            'message' => 'Ошибка валидации',
+            'errors' => [[
+                'field' => 'client_id',
+                'message' => 'Значение должно быть положительным числом',
+            ]],
+        ], $data);
 
         $this->entityManager->clear();
 
@@ -242,8 +253,13 @@ final class IssueLoanControllerTest extends DatabaseWebTestCase
             flags: JSON_THROW_ON_ERROR,
         );
 
-        self::assertArrayHasKey('detail', $data);
-        self::assertSame('book_id: Значение должно быть положительным числом', $data['detail']);
+        self::assertSame([
+            'message' => 'Ошибка валидации',
+            'errors' => [[
+                'field' => 'book_id',
+                'message' => 'Значение должно быть положительным числом',
+            ]],
+        ], $data);
 
         $this->entityManager->clear();
 
