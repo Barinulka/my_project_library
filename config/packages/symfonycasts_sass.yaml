@@ -2,3 +2,4 @@ symfonycasts_sass:
     root_sass:
         - 'assets/styles/app.scss'
         - 'assets/styles/pages/clients.scss'
+        - 'assets/styles/pages/books.scss'

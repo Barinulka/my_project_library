@@ -27,4 +27,5 @@ return [
     '@hotwired/stimulus' => ['version' => '3.2.2'],
     '@symfony/stimulus-bundle' => ['path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js'],
     'clients' => ['path' => './assets/entries/clients.js', 'entrypoint' => true],
+    'books' => ['path' => './assets/entries/books.js', 'entrypoint' => true],
 ];

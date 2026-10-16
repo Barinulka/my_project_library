@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block importmap %}
-    {{ importmap(['app']) }}
+    {{ importmap(['app', 'books']) }}
 {% endblock %}
 
 {% block title %}
@@ -9,5 +9,73 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Список книг</h1>
+    <div class="books-content" {{ stimulus_controller('books', {
+        url: path('api.book_list'),
+        createUrl: path('api.books_create')
+    }) }}>
+        <div class="content-header">
+            <h1>Список книг</h1>
+
+            <button type="button" class="button button--primary"
+                {{ stimulus_action('books', 'openDialog', 'click') }}>
+                Добавить книгу
+            </button>
+        </div>
+        <div class="content-block">
+            <template {{ stimulus_target('books', 'cardTemplate') }}>
+                <li class="card book-card">
+                    <div class="book-card__header">
+                        <h2 class="book-card__title" data-field="title"></h2>
+                        <span class="badge" data-field="availability"></span>
+                    </div>
+
+                    <div class="book-card__author" data-field="author"></div>
+
+                    <div class="book-card__inventory">
+                        Инвентарный номер:
+                        <span data-field="inv_number"></span>
+                    </div>
+                </li>
+            </template>
+            <div class="status" {{ stimulus_target('books', 'status') }} role="status"></div>
+            <ul class="card-list book-list" {{ stimulus_target('books', 'list') }}></ul>
+        </div>
+
+        <dialog class="modal"
+            {{ stimulus_target('books', 'dialog') }}
+            {{ stimulus_action('books', 'onDialogCancel', 'cancel') }}
+                aria-labelledby="create-book-title">
+            <h2 id="create-book-title" class="modal__title">Добавить книгу</h2>
+            <form class="form"
+                {{ stimulus_target('books', 'form') }}
+                {{ stimulus_action('books', 'createBook', 'submit') }}>
+                <div class="status" role="alert" {{ stimulus_target('books', 'formError') }}></div>
+                <div class="form-element">
+                    <label for="title">Название книги</label>
+                    <input type="text" name="title" id="title" required aria-describedby="book-title-error">
+                    <div id="book-title-error" class="form-error" {{ stimulus_target('books', 'titleError') }}></div>
+                </div>
+                <div class="form-element">
+                    <label for="author">Автор книги</label>
+                    <input type="text" name="author" id="author" required aria-describedby="book-author-error">
+                    <div id="book-author-error" class="form-error" {{ stimulus_target('books', 'authorError') }}></div>
+                </div>
+                <div class="form-element">
+                    <label for="inv_number">Инвентарный номер</label>
+                    <input type="text" name="inv_number" id="inv_number" required aria-describedby="book-inv_number-error">
+                    <div id="book-inv_number-error" class="form-error" {{ stimulus_target('books', 'invNumberError') }}></div>
+                </div>
+                <div class="modal__actions">
+                    <button type="submit" class="button button--primary"
+                        {{ stimulus_target('books', 'submitButton') }}>
+                        Добавить
+                    </button>
+                    <button type="button" class="button button--secondary"
+                        {{ stimulus_action('books', 'closeDialog', 'click') }}>
+                        Отмена
+                    </button>
+                </div>
+            </form>
+        </dialog>
+    </div>
 {% endblock %}
