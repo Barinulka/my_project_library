@@ -117,4 +117,20 @@ class LoanRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /** @return Loan[] */
+    public function getOpenedLoansList(): array
+    {
+        $qb = $this->createQueryBuilder('l');
+
+        $qb
+            ->join('l.book', 'b')
+            ->join('l.client', 'c')
+            ->addSelect('b')
+            ->addSelect('c')
+            ->where('l.returned_at IS NULL')
+            ->orderBy('l.loan_at', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
 }

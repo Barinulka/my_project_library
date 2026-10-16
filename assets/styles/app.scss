@@ -1,0 +1,23 @@
+@use 'layout';
+@use 'components/button';
+@use 'components/card';
+@use 'components/status';
+@use 'components/modal';
+@use 'components/form';
+
+:root {
+    --color-background: #f5f7fb;
+    --color-surface: #ffffff;
+    --color-text: #1f2937;
+    --color-muted: #64748b;
+    --color-border: #e2e8f0;
+    --color-accent: #4338ca;
+    --color-accent-soft: #eef2ff;
+    --color-accent-hover: #3730a3;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}

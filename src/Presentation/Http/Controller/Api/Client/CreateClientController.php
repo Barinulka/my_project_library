@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Presentation\Http\Controller\Client;
+namespace App\Presentation\Http\Controller\Api\Client;
 
 use App\Application\Client\CreateClientHandler;
-use App\Application\Client\Exception\ClientEmailAlreadyExistsException;
 use App\Presentation\Http\Request\Client\CreateClientRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

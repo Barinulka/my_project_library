@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Presentation\Http\Controller\Book;
+namespace App\Presentation\Http\Controller\Api\Book;
 
 use App\Domain\Book\Entity\Book;
 use App\Infrastructure\Persistence\Doctrine\BookRepository;

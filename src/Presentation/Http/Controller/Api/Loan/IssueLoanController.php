@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Presentation\Http\Controller\Loan;
+namespace App\Presentation\Http\Controller\Api\Loan;
 
-use App\Application\Loan\Exception\LoanIssueRejectedException;
 use App\Application\Loan\IssueLoanHandler;
 use App\Infrastructure\Persistence\Doctrine\BookRepository;
 use App\Infrastructure\Persistence\Doctrine\ClientRepository;

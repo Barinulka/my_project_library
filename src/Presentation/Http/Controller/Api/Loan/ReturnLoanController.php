@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Presentation\Http\Controller\Loan;
+namespace App\Presentation\Http\Controller\Api\Loan;
 
-use App\Application\Loan\Exception\LoanReturnRejectedException;
 use App\Application\Loan\ReturnLoanHandler;
 use App\Infrastructure\Persistence\Doctrine\BookRepository;
 use App\Presentation\Http\Request\Loan\ReturnLoanRequest;

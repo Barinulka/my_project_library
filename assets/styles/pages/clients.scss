@@ -1,0 +1,15 @@
+.client-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.client-card__name {
+    font-weight: 600;
+}
+
+.client-card__email {
+    font-size: 14px;
+    color: var(--color-muted);
+    overflow-wrap: anywhere;
+}

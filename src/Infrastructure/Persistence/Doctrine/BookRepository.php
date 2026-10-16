@@ -36,6 +36,19 @@ class BookRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    public function getList(): array
+    {
+        $qb = $this->createQueryBuilder('b');
+
+        $qb
+            ->select('b.id, b.inv_number, b.title, b.author')
+            ->addSelect('CASE WHEN loan.id IS NULL THEN 1 ELSE 0 END AS available')
+            ->leftJoin(Loan::class, 'loan', 'WITH', 'loan.book = b AND loan.returned_at IS NULL')
+        ;
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
     public function hasInvNumber(string $inv_number): bool
     {
         $qb = $this->createQueryBuilder('b');

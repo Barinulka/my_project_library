@@ -2,31 +2,25 @@
 
 declare(strict_types=1);
 
-namespace App\Presentation\Http\Controller\Book;
+namespace App\Presentation\Http\Controller\Api\Loan;
 
 use App\Domain\Loan\Entity\Loan;
-use App\Infrastructure\Persistence\Doctrine\BookRepository;
 use App\Infrastructure\Persistence\Doctrine\LoanRepository;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class BookLoanHistoryController extends AbstractController
+final class OverdueLoansController extends AbstractController
 {
-    #[Route('/api/books/{book_id}/loans', name: 'api.books_loans_history', methods: ['GET'], format: 'json')]
+    #[Route('/api/loans/overdue', name: 'api.loans.overdue', methods: ['GET'], format: 'json')]
     public function __invoke(
-        int $book_id,
-        BookRepository $bookRepository,
         LoanRepository $loanRepository,
     ): JsonResponse {
-        $book = $bookRepository->find($book_id);
+        $now = new DateTimeImmutable('now');
 
-        if ($book === null) {
-            throw $this->createNotFoundException('Книга не найдена');
-        }
-
-        $loans = $loanRepository->findHistoryByBook($book);
+        $overdueLoans = $loanRepository->findOverdueLoans($now);
 
         $response = array_map(fn (Loan $loan) => [
             'loan_id' => $loan->id(),
@@ -38,8 +32,7 @@ final class BookLoanHistoryController extends AbstractController
             'author' => $loan->book()->author(),
             'loan_at' =>$loan->loan_at()->format(DATE_ATOM),
             'planned_return_at' => $loan->planned_return_at()->format(DATE_ATOM),
-            'returned_at' => $loan->returned_at()?->format(DATE_ATOM),
-        ], $loans);
+        ], $overdueLoans);
 
         return $this->json($response, Response::HTTP_OK);
     }

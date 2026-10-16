@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block importmap %}
+    {{ importmap(['app', 'clients']) }}
+{% endblock %}
+
+{% block title %}
+    Читатели
+{% endblock %}
+
+{% block content %}
+    <div class="clients-content" {{ stimulus_controller('clients', {
+        url: path('api.client_list'),
+        createUrl: path('api.client_create')
+    }) }}>
+        <div class="content-header">
+            <h1>Читатели</h1>
+
+            <button type="button" class="button button--primary"
+                {{ stimulus_action('clients', 'openDialog', 'click') }}>
+                Добавить читателя
+            </button>
+        </div>
+        <div class="content-block">
+            <template {{ stimulus_target('clients', 'cardTemplate') }}>
+                <li class="card client-card">
+                    <div class="client-card__name" data-field="name"></div>
+                    <div class="client-card__email" data-field="email"></div>
+                </li>
+            </template>
+            <div class="status" {{ stimulus_target('clients', 'status') }} role="status"></div>
+            <ul class="card-list client-list" {{ stimulus_target('clients', 'list') }}>
+            </ul>
+        </div>
+
+        <dialog class="modal"
+            {{ stimulus_target('clients', 'dialog') }}
+            {{ stimulus_action('clients', 'onDialogCancel', 'cancel') }}
+            aria-labelledby="create-client-title">
+            <h2 id="create-client-title" class="modal__title">Добавить читателя</h2>
+            <form class="form"
+                {{ stimulus_target('clients', 'form') }}
+                {{ stimulus_action('clients', 'createClient', 'submit') }}>
+                <div class="status" role="alert" {{ stimulus_target('clients', 'formError') }}></div>
+                <div class="form-element">
+                    <label for="name">Имя читателя</label>
+                    <input type="text" name="name" id="name" required aria-describedby="client-name-error">
+                    <div id="client-name-error" class="form-error" {{ stimulus_target('clients', 'nameError') }}></div>
+                </div>
+                <div class="form-element">
+                    <label for="email">Email читателя</label>
+                    <input type="email" name="email" id="email" required aria-describedby="client-email-error">
+                    <div id="client-email-error" class="form-error" {{ stimulus_target('clients', 'emailError') }}></div>
+                </div>
+                <div class="modal__actions">
+                    <button type="submit" class="button button--primary"
+                        {{ stimulus_target('clients', 'submitButton') }}>
+                        Добавить
+                    </button>
+                    <button type="button" class="button button--secondary"
+                        {{ stimulus_action('clients', 'closeDialog', 'click') }}>
+                        Отмена
+                    </button>
+                </div>
+            </form>
+        </dialog>
+    </div>
+{% endblock %}

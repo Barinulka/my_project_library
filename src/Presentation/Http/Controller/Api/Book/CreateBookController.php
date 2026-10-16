@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Presentation\Http\Controller\Book;
+namespace App\Presentation\Http\Controller\Api\Book;
 
 use App\Application\Book\CreateBookHandler;
-use App\Application\Book\Exception\BookInvNumberAlreadyExistsException;
 use App\Presentation\Http\Request\Book\CreateBookRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
