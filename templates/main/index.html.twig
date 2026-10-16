@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Библиотека
+{% endblock %}
+
+{% block content %}
+    <div class="main-content">
+        <div class="content-header">
+            <h1>Библиотека</h1>
+
+        </div>
+        <div class="content-block">
+            <p class="content-description">
+                Учёт книг, читателей и выдач
+            </p>
+            <div class="card-list">
+                <a href="{{ path('web.clients') }}" class="card section-link">
+                    <span class="section-link__title">Читатели</span>
+                    <span class="section-link__description">
+                    Регистрация читателей и просмотр выданных книг
+                </span>
+                </a>
+                <a href="{{ path('web.books') }}" class="card section-link">
+                    <span class="section-link__title">Список книг</span>
+                    <span class="section-link__description">
+                    Доступные экземпляры и история выдач
+                </span>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

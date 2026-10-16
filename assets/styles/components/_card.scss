@@ -14,3 +14,33 @@
     border: 1px solid var(--color-border);
     border-radius: 12px;
 }
+
+.section-link {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    color: var(--color-text);
+    text-decoration: none;
+    transition: border-color 150ms, background-color 150ms;
+
+    &:hover {
+        border-color: var(--color-accent);
+        background: var(--color-accent-soft);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 3px;
+    }
+}
+
+.section-link__title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.section-link__description {
+    font-size: 14px;
+    color: var(--color-muted);
+}
