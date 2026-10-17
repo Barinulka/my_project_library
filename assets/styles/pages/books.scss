@@ -1,15 +1,15 @@
 .book-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 24px;
+}
+
+.book-card__info {
     display: flex;
     flex-direction: column;
     gap: 8px;
-}
-
-.book-card__header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
+    min-width: 0;
 }
 
 .book-card__title {
@@ -29,4 +29,53 @@
 .book-card__inventory {
     font-size: 13px;
     color: var(--color-muted);
+}
+
+.book-card__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.modal--history {
+    width: min(640px, calc(100% - 32px));
+}
+
+.history-list {
+    margin-bottom: 24px;
+
+    &:empty {
+        display: none;
+    }
+}
+
+.history-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    font-size: 14px;
+    color: var(--color-muted);
+}
+
+.history-card__reader {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text);
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+    .book-card {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+    }
+
+    .book-card__actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+    }
 }

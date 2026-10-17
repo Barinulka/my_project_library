@@ -48,6 +48,13 @@
                                     Список книг
                                 </a>
                             </li>
+                            <li>
+                                <a href="{{ path('web.loans') }}"
+                                   {% if currentRoute == 'web.loans' %}aria-current="page"{% endif %}
+                                >
+                                    Выдачи
+                                </a>
+                            </li>
                         </ul>
                     </nav>
                 </aside>

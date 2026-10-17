@@ -11,6 +11,7 @@ final readonly class LoanResponse
         public int $book_id,
         public int $client_id,
         public string $client_name,
+        public string $author,
         public string $inv_number,
         public string $title,
         public string $loan_at,

@@ -3,10 +3,26 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
     static values = {
         url: String,
-        createUrl: String
+        createUrl: String,
+        historyUrlTemplate: String,
     };
 
-    static targets = ['list', 'cardTemplate', 'status', 'dialog', 'form', 'formError', 'titleError', 'authorError', 'invNumberError', 'submitButton'];
+    static targets = [
+        'list',
+        'cardTemplate',
+        'status',
+        'dialog',
+        'form',
+        'formError',
+        'titleError',
+        'authorError',
+        'invNumberError',
+        'submitButton',
+        'history',
+        'historyStatus',
+        'historyList',
+        'historyCardTemplate',
+    ];
 
     isSubmitting = false;
 
@@ -57,6 +73,9 @@ export default class extends Controller {
 
             availability.textContent = book.available ? 'Доступна' : 'Выдана';
             availability.classList.add(book.available ? 'badge--available' : 'badge--unavailable',);
+
+            const historyButton = template.querySelector('[data-field="historyButton"]');
+            historyButton.dataset.bookId = book.id;
 
             this.listTarget.append(template);
         })
@@ -154,5 +173,61 @@ export default class extends Controller {
         if (this.isSubmitting) {
             event.preventDefault();
         }
+    }
+
+    async historyBook(event) {
+        const bookId = Number(event.currentTarget.dataset.bookId);
+
+        const url = this.historyUrlTemplateValue.replace('__BOOK_ID__', String(bookId),);
+
+        this.historyListTarget.replaceChildren();
+        this.historyStatusTarget.textContent = 'Загрузка истории…';
+
+        this.historyTarget.showModal();
+
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Не удалось загрузить историю: HTTP ${response.status}`,);
+            }
+
+            const history = await response.json();
+
+            this.renderHistory(history);
+
+            this.historyStatusTarget.textContent = history.length === 0 ? 'Этот экземпляр ещё не выдавался' : '';
+        } catch (error) {
+            console.error('Ошибка загрузки истории:', error);
+            this.historyStatusTarget.textContent = 'Не удалось загрузить историю. Закройте окно и попробуйте снова.';
+        }
+    }
+
+    renderHistory(history) {
+        this.historyListTarget.replaceChildren();
+
+        history.forEach((loan) => {
+            const card = this.historyCardTemplateTarget.content.cloneNode(true);
+
+            card.querySelector('[data-field="client_name"]').textContent = loan.client_name;
+
+            card.querySelector('[data-field="loan_at"]').textContent = new Date(loan.loan_at).toLocaleDateString('ru-RU');
+
+            card.querySelector('[data-field="planned_return_at"]').textContent = new Date(loan.planned_return_at).toLocaleDateString('ru-RU');
+
+            const returnStatus = card.querySelector('[data-field="return_status"]');
+
+            returnStatus.textContent = loan.returned_at === null ? 'На руках' : `Возвращена: ${new Date(loan.returned_at).toLocaleDateString('ru-RU')}`;
+
+            this.historyListTarget.append(card);
+        });
+    }
+
+    closeHistory() {
+        this.historyTarget.close();
     }
 }

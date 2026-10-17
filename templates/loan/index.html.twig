@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block importmap %}
+    {{ importmap(['app', 'loans']) }}
+{% endblock %}
+
+{% block title %}
+    Выдачи
+{% endblock %}
+
+{% block content %}
+    <div class="loans-content" {{ stimulus_controller('loans', {
+        url: path('api.loans_list'),
+        returnUrl: path('api.return_loan'),
+        clientsUrl: path('api.client_list'),
+        availableBooksUrl: path('api.available_books'),
+        issueUrl: path('api.issue_loans')
+    }) }}>
+        <div class="content-header">
+            <h1>Выдачи</h1>
+
+            <button type="button" class="button button--primary"
+                {{ stimulus_action('loans', 'openIssueDialog', 'click') }}
+            >
+                Выдать книгу
+            </button>
+        </div>
+
+        <div class="status" role="status" {{ stimulus_target('loans', 'status') }}></div>
+        <template {{ stimulus_target('loans', 'cardTemplate') }}>
+            <li class="card loan-card">
+                <div class="loan-card__book">
+                    <h2 class="loan-card__title" data-field="title"></h2>
+                    <div class="loan-card__author" data-field="author"></div>
+                    <div class="loan-card__inventory">
+                        Инвентарный номер:
+                        <span data-field="inv_number"></span>
+                    </div>
+                </div>
+
+                <div class="loan-card__details">
+                    <div class="loan-card__reader" data-field="client_name"></div>
+                    <div>Выдана: <span data-field="loan_at"></span></div>
+                    <div>Вернуть до: <span data-field="planned_return_at"></span></div>
+                </div>
+
+                <div class="loan-card__actions">
+                    <span class="badge" data-field="overdue"></span>
+
+                    <button
+                        type="button"
+                        class="button button--secondary"
+                        data-field="returnButton"
+                        {{ stimulus_action('loans', 'returnBook', 'click') }}
+                    >
+                        Возврат
+                    </button>
+                </div>
+            </li>
+        </template>
+        <ul class="card-list" {{ stimulus_target('loans', 'list') }}></ul>
+
+        <dialog class="modal" aria-labelledby="issue-loan-title"
+            {{ stimulus_target('loans', 'issueDialog') }}
+            {{ stimulus_action('loans', 'onIssueDialogCancel', 'cancel') }}
+        >
+            <h2 id="issue-loan-title" class="modal__title">Выдать книгу</h2>
+
+            <form class="form"
+                {{ stimulus_target('loans', 'issueForm') }}
+                {{ stimulus_action('loans', 'issueLoan', 'submit') }}
+            >
+                <div class="status" role="alert" {{ stimulus_target('loans', 'issueError') }}></div>
+
+                <div class="form-element">
+                    <label for="issue-client">Читатель</label>
+
+                    <select id="issue-client" name="client_id" required
+                        {{ stimulus_target('loans', 'clientSelect') }}
+                    >
+                        <option value="">Выберите читателя</option>
+                    </select>
+                </div>
+
+                <div class="form-element">
+                    <label for="issue-book">Доступный экземпляр</label>
+
+                    <select id="issue-book" name="book_id" required
+                        {{ stimulus_target('loans', 'bookSelect') }}
+                    >
+                        <option value="">Выберите экземпляр</option>
+                    </select>
+                </div>
+
+                <div class="modal__actions">
+                    <button type="submit" class="button button--primary" disabled
+                        {{ stimulus_target('loans', 'issueSubmit') }}
+                    >
+                        Выдать
+                    </button>
+
+                    <button type="button" class="button button--secondary"
+                        {{ stimulus_action('loans', 'closeIssueDialog', 'click') }}
+                    >
+                        Отмена
+                    </button>
+                </div>
+            </form>
+        </dialog>
+    </div>
+{% endblock %}

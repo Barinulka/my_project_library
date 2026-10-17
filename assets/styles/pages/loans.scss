@@ -1,0 +1,62 @@
+.loan-card {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.4fr)
+        minmax(0, 1fr)
+        auto;
+    gap: 24px;
+    align-items: start;
+}
+
+.loan-card__book,
+.loan-card__details,
+.loan-card__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.loan-card__title {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.loan-card__author,
+.loan-card__details {
+    color: var(--color-muted);
+    font-size: 14px;
+}
+
+.loan-card__inventory {
+    color: var(--color-muted);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.loan-card__reader {
+    color: var(--color-text);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.loan-card__actions {
+    align-items: flex-end;
+    gap: 16px;
+}
+
+@media (max-width: 900px) {
+    .loan-card {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+    }
+
+    .loan-card__actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+    }
+}

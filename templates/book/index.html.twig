@@ -11,7 +11,10 @@
 {% block content %}
     <div class="books-content" {{ stimulus_controller('books', {
         url: path('api.book_list'),
-        createUrl: path('api.books_create')
+        createUrl: path('api.books_create'),
+        historyUrlTemplate: path('api.books_loans_history', {
+            book_id: '__BOOK_ID__'
+        })
     }) }}>
         <div class="content-header">
             <h1>Список книг</h1>
@@ -24,16 +27,28 @@
         <div class="content-block">
             <template {{ stimulus_target('books', 'cardTemplate') }}>
                 <li class="card book-card">
-                    <div class="book-card__header">
+                    <div class="book-card__info">
                         <h2 class="book-card__title" data-field="title"></h2>
-                        <span class="badge" data-field="availability"></span>
+
+                        <div class="book-card__author" data-field="author"></div>
+
+                        <div class="book-card__inventory">
+                            Инвентарный номер:
+                            <span data-field="inv_number"></span>
+                        </div>
                     </div>
 
-                    <div class="book-card__author" data-field="author"></div>
+                    <div class="book-card__actions">
+                        <span class="badge" data-field="availability"></span>
 
-                    <div class="book-card__inventory">
-                        Инвентарный номер:
-                        <span data-field="inv_number"></span>
+                        <button
+                            type="button"
+                            class="button button--secondary"
+                            data-field="historyButton"
+                            {{ stimulus_action('books', 'historyBook', 'click') }}
+                        >
+                            История
+                        </button>
                     </div>
                 </li>
             </template>
@@ -76,6 +91,41 @@
                     </button>
                 </div>
             </form>
+        </dialog>
+
+        <dialog class="modal modal--history"
+            {{ stimulus_target('books', 'history') }}
+            aria-labelledby="history-book-title"
+        >
+            <h2 id="history-book-title" class="modal__title">История выдач</h2>
+
+            <div class="status" role="status" {{ stimulus_target('books', 'historyStatus') }}></div>
+
+            <ul class="card-list history-list" {{ stimulus_target('books', 'historyList') }}></ul>
+
+            <template {{ stimulus_target('books', 'historyCardTemplate') }}>
+                <li class="card history-card">
+                    <div class="history-card__reader" data-field="client_name"></div>
+
+                    <div>
+                        Выдана:
+                        <span data-field="loan_at"></span>
+                    </div>
+
+                    <div>
+                        Вернуть до:
+                        <span data-field="planned_return_at"></span>
+                    </div>
+
+                    <div data-field="return_status"></div>
+                </li>
+            </template>
+
+            <div class="modal__actions">
+                <button type="button" class="button button--secondary" {{ stimulus_action('books', 'closeHistory', 'click') }}>
+                    Закрыть
+                </button>
+            </div>
         </dialog>
     </div>
 {% endblock %}

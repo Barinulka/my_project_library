@@ -27,6 +27,7 @@ final class OpenedLoansListController extends AbstractController
             book_id: $loan->book()->id(),
             client_id: $loan->client()->id(),
             client_name: $loan->client()->name(),
+            author: $loan->book()->author(),
             inv_number: $loan->book()->invNumber(),
             title: $loan->book()->title(),
             loan_at: $loan->loan_at()->format(DATE_ATOM),
